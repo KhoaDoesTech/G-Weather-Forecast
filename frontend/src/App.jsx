@@ -2,6 +2,7 @@ import { useState } from 'react';
 import WeatherDetails from './components/WeatherDetails';
 import WeatherForecast from './components/WeatherForecast';
 import WeatherInput from './components/WeatherInput';
+import { getCurrentWeather } from './apis/Weather';
 
 function App() {
   const [currentWeather, setCurrentWeather] = useState(null);
@@ -9,10 +10,8 @@ function App() {
 
   const getWeatherData = async (city) => {
     const apiKey = '9802bcba364d4b2a82483858241706';
-    const weatherResponse = await fetch(
-      `http://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${city}`
-    );
-    const weatherData = await weatherResponse.json();
+
+    const weatherData = await getCurrentWeather(city);
     setCurrentWeather(weatherData);
 
     const forecastResponse = await fetch(

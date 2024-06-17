@@ -1,12 +1,22 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 const WeatherInput = ({ getWeatherData }) => {
   const [city, setCity] = useState('');
+  const [cityHistory, setCityHistory] = useState(() => {
+    const savedHistory = localStorage.getItem('cityHistory');
+    return savedHistory ? JSON.parse(savedHistory) : [];
+  });
 
   const handleSearch = () => {
     if (city) {
       getWeatherData(city);
+      setCityHistory((prevHistory) => {
+        if (!prevHistory.includes(city)) {
+          return [...prevHistory, city];
+        }
+        return prevHistory;
+      });
     }
   };
 
@@ -16,6 +26,22 @@ const WeatherInput = ({ getWeatherData }) => {
       getWeatherData(`${latitude},${longitude}`);
     });
   };
+
+  const handleCityHistoryClick = (selectedCity) => {
+    setCity(selectedCity);
+    getWeatherData(selectedCity);
+  };
+
+  useEffect(() => {
+    localStorage.setItem('cityHistory', JSON.stringify(cityHistory));
+
+    const timer = setTimeout(() => {
+      setCityHistory([]);
+      localStorage.removeItem('cityHistory');
+    }, 86400000); // 86400000 milliseconds = 1 day
+
+    return () => clearTimeout(timer);
+  }, [cityHistory]);
 
   return (
     <div className="weather-input">
@@ -34,6 +60,23 @@ const WeatherInput = ({ getWeatherData }) => {
       <button className="location-btn" onClick={handleLocationSearch}>
         Use Current Location
       </button>
+
+      {cityHistory.length > 0 && (
+        <div className="history-search">
+          <h3>Search History</h3>
+          <ul className="history-card">
+            {cityHistory.map((city, index) => (
+              <li
+                className="history-list"
+                key={index}
+                onClick={() => handleCityHistoryClick(city)}
+              >
+                {city}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 };

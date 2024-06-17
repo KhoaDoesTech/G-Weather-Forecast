@@ -133,6 +133,47 @@ h1 {
   margin: 5px 0 -12px 0;
 }
 
+/*  */
+.history-search {
+  margin-top: 30px;
+}
+.history-card {
+  overflow-y: auto;
+}
+
+::-webkit-scrollbar {
+  width: 8px; 
+}
+
+::-webkit-scrollbar-track {
+  background-color: #E3F2FD;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color:  #E3F2FD;
+  border-radius: 4px; 
+}
+.history-list {
+  list-style: none;
+  background: goldenrod;
+  padding: 2%;
+  margin-top: 2%;
+  border-radius: 5px;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  /* Nếu bạn muốn màu nền thay đổi khi di chuột qua */
+  transition: background-color 0.3s ease;
+}
+
+.history-list:hover {
+  background-color: lightgreen;
+}
+
+
+
+
 @media (max-width: 1400px) {
   .weather-data .current-weather {
     padding: 20px;

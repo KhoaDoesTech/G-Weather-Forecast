@@ -5,18 +5,18 @@ const WeatherDetails = ({ weather }) => {
     <div className="current-weather">
       <div className="details">
         <h2>
-          {weather.location.name} ({weather.location.localtime})
+          {weather.city} ({weather.time})
         </h2>
-        <h6>Temperature: {weather.current.temp_c}°C</h6>
-        <h6>Wind: {weather.current.wind_kph} KPH</h6>
-        <h6>Humidity: {weather.current.humidity}%</h6>
+        <h6>Temperature: {weather.temperature}°C</h6>
+        <h6>Wind: {weather.windSpeed} KPH</h6>
+        <h6>Humidity: {weather.humidity}%</h6>
       </div>
       <div className="icon">
         <img
-          src={'https:' + weather.current.condition.icon}
-          alt={weather.current.condition.text}
+          src={'https:' + weather.condition.icon}
+          alt={weather.condition.text}
         />
-        <h6>{weather.current.condition.text}</h6>
+        <h6>{weather.condition.text}</h6>
       </div>
     </div>
   );
