@@ -116,6 +116,20 @@ h1 {
   display: flex;
   gap: 20px;
 }
+
+.weather-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px;
+}
+
+.weather-cards + .weather-cards {
+  margin-top: 20px;
+}
+
 .weather-cards .card {
   color: #fff;
   padding: 18px 16px;

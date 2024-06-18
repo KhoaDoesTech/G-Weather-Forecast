@@ -2,33 +2,24 @@ import { useState } from 'react';
 import WeatherDetails from './components/WeatherDetails';
 import WeatherForecast from './components/WeatherForecast';
 import WeatherInput from './components/WeatherInput';
-import { getCurrentWeather } from './apis/Weather';
+import { searchCity } from './apis/Weather';
 
 function App() {
-  const [currentWeather, setCurrentWeather] = useState(null);
-  const [forecast, setForecast] = useState([]);
+  const [city, setCity] = useState('');
 
-  const getWeatherData = async (city) => {
-    const apiKey = '9802bcba364d4b2a82483858241706';
-
-    const weatherData = await getCurrentWeather(city);
-    setCurrentWeather(weatherData);
-
-    const forecastResponse = await fetch(
-      `http://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${city}&days=4`
-    );
-    const forecastData = await forecastResponse.json();
-    setForecast(forecastData.forecast.forecastday);
+  const searchCityData = async (keySearch) => {
+    const cityData = await searchCity(keySearch);
+    setCity(cityData);
   };
 
   return (
     <>
       <h1>Weather Dashboard</h1>
       <div className="container">
-        <WeatherInput getWeatherData={getWeatherData} />
+        <WeatherInput searchCityData={searchCityData} />
         <div className="weather-data">
-          {currentWeather && <WeatherDetails weather={currentWeather} />}
-          {forecast.length > 0 && <WeatherForecast forecast={forecast} />}
+          {city && <WeatherDetails city={city} />}
+          {city && <WeatherForecast city={city} />}
         </div>
       </div>
     </>

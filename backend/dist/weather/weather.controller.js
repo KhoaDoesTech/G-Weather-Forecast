@@ -27,6 +27,10 @@ let WeatherController = class WeatherController {
         const forecast = await this.weatherService.getWeatherForecast(city, page, limit);
         return forecast;
     }
+    async searchCity(keySearch) {
+        const city = await this.weatherService.searchCity(keySearch);
+        return city;
+    }
 };
 exports.WeatherController = WeatherController;
 __decorate([
@@ -45,6 +49,13 @@ __decorate([
     __metadata("design:paramtypes", [String, Number, Number]),
     __metadata("design:returntype", Promise)
 ], WeatherController.prototype, "getWeatherForecast", null);
+__decorate([
+    (0, common_1.Get)('search/:keySearch'),
+    __param(0, (0, common_1.Param)('keySearch')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], WeatherController.prototype, "searchCity", null);
 exports.WeatherController = WeatherController = __decorate([
     (0, common_1.Controller)('weather'),
     __metadata("design:paramtypes", [weather_service_1.WeatherService])

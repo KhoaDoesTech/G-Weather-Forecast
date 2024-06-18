@@ -1,6 +1,28 @@
 import PropTypes from 'prop-types';
+import { getCurrentWeather } from '../apis/Weather';
+import { useEffect, useState } from 'react';
 
-const WeatherDetails = ({ weather }) => {
+const WeatherDetails = ({ city }) => {
+  const [weather, setWeather] = useState(null);
+  const [isFirstRender, setIsFirstRender] = useState(true);
+
+  useEffect(() => {
+    const fetchWeather = async () => {
+      const weatherData = await getCurrentWeather(city);
+      setWeather(weatherData);
+    };
+
+    if (!isFirstRender) {
+      fetchWeather();
+    } else {
+      setIsFirstRender(false);
+    }
+  }, [city, isFirstRender]);
+
+  if (!weather) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="current-weather">
       <div className="details">
@@ -23,7 +45,7 @@ const WeatherDetails = ({ weather }) => {
 };
 
 WeatherDetails.propTypes = {
-  weather: PropTypes.object.isRequired,
+  city: PropTypes.string.isRequired,
 };
 
 export default WeatherDetails;

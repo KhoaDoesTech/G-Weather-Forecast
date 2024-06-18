@@ -24,4 +24,10 @@ export class WeatherController {
     );
     return forecast;
   }
+
+  @Get('search/:keySearch')
+  async searchCity(@Param('keySearch') keySearch: string) {
+    const city = await this.weatherService.searchCity(keySearch);
+    return city;
+  }
 }

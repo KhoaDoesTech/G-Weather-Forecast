@@ -39,21 +39,33 @@ let WeatherService = class WeatherService {
         const url = `http://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${city}&days=${totalDays}`;
         const response = await (0, rxjs_1.lastValueFrom)(this.httpService.get(url));
         const data = response.data;
-        const forecast = data.forecast.forecastday.slice(1).map((item) => ({
+        const forecast = data.forecast.forecastday.slice(1);
+        const forecastData = forecast
+            .slice((page - 1) * limit, page * limit)
+            .map((item) => ({
             date: item.date,
             temperature: item.day.avgtemp_c,
             windSpeed: item.day.maxwind_kph,
             humidity: item.day.avghumidity,
             condition: item.day.condition,
         }));
-        const start = (page - 1) * limit;
-        const end = start + limit;
-        const pagedForecast = forecast.slice(start, end);
         return {
-            data: pagedForecast,
+            data: forecastData,
             page: page,
             limit: limit,
             total: forecast.length,
+        };
+    }
+    async searchCity(keySearch) {
+        const apiKey = process.env.WEATHER_API_KEY;
+        console.log(keySearch);
+        const url = `http://api.weatherapi.com/v1/search.json?key=${apiKey}&q=${keySearch}`;
+        const response = await (0, rxjs_1.lastValueFrom)(this.httpService.get(url));
+        const data = response.data;
+        if (!data.length)
+            return new Error('City not found');
+        return {
+            city: data[0].name,
         };
     }
 };

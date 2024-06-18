@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
-const WeatherInput = ({ getWeatherData }) => {
+const WeatherInput = ({ searchCityData }) => {
   const [city, setCity] = useState('');
   const [cityHistory, setCityHistory] = useState(() => {
     const savedHistory = localStorage.getItem('cityHistory');
@@ -10,7 +10,7 @@ const WeatherInput = ({ getWeatherData }) => {
 
   const handleSearch = () => {
     if (city) {
-      getWeatherData(city);
+      searchCityData(city);
       setCityHistory((prevHistory) => {
         if (!prevHistory.includes(city)) {
           return [...prevHistory, city];
@@ -23,13 +23,13 @@ const WeatherInput = ({ getWeatherData }) => {
   const handleLocationSearch = () => {
     navigator.geolocation.getCurrentPosition(async (position) => {
       const { latitude, longitude } = position.coords;
-      getWeatherData(`${latitude},${longitude}`);
+      searchCityData(`${latitude},${longitude}`);
     });
   };
 
   const handleCityHistoryClick = (selectedCity) => {
     setCity(selectedCity);
-    getWeatherData(selectedCity);
+    searchCityData(selectedCity);
   };
 
   useEffect(() => {
@@ -82,7 +82,7 @@ const WeatherInput = ({ getWeatherData }) => {
 };
 
 WeatherInput.propTypes = {
-  getWeatherData: PropTypes.func.isRequired,
+  searchCityData: PropTypes.func.isRequired,
 };
 
 export default WeatherInput;

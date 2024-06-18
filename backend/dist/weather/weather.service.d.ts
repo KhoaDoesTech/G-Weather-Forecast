@@ -16,4 +16,7 @@ export declare class WeatherService {
         limit: number;
         total: any;
     }>;
+    searchCity(keySearch: string): Promise<Error | {
+        city: any;
+    }>;
 }
