@@ -8,12 +8,12 @@ const WeatherInput = ({ searchCityData }) => {
     return savedHistory ? JSON.parse(savedHistory) : [];
   });
 
-  const handleSearch = () => {
-    if (city) {
-      searchCityData(city);
+  const handleSearch = async () => {
+    const foundCity = await searchCityData(city);
+    if (foundCity) {
       setCityHistory((prevHistory) => {
-        if (!prevHistory.includes(city)) {
-          return [...prevHistory, city];
+        if (!prevHistory.includes(foundCity)) {
+          return [...prevHistory, foundCity];
         }
         return prevHistory;
       });
@@ -23,7 +23,15 @@ const WeatherInput = ({ searchCityData }) => {
   const handleLocationSearch = () => {
     navigator.geolocation.getCurrentPosition(async (position) => {
       const { latitude, longitude } = position.coords;
-      searchCityData(`${latitude},${longitude}`);
+      const foundCity = await searchCityData(`${latitude},${longitude}`);
+      if (foundCity) {
+        setCityHistory((prevHistory) => {
+          if (!prevHistory.includes(foundCity)) {
+            return [...prevHistory, foundCity];
+          }
+          return prevHistory;
+        });
+      }
     });
   };
 

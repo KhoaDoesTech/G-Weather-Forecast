@@ -10,6 +10,8 @@ function App() {
   const searchCityData = async (keySearch) => {
     const cityData = await searchCity(keySearch);
     setCity(cityData);
+
+    return cityData;
   };
 
   return (

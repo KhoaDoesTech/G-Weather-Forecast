@@ -11,15 +11,14 @@ const WeatherForecast = ({ city }) => {
   const [total, setTotal] = useState(0);
   const observer = useRef();
 
-  // useEffect(() => {
-  //   const resetForecast = () => {
-  //     setForecast([]);
-  //     setPage(1);
-  //     setLoading(false);
-  //     setTotal(0);
-  //   };
-  //   resetForecast();
-  // }, [city]);
+  useEffect(() => {
+    const resetForecast = () => {
+      setForecast([]);
+      setPage(1);
+      setTotal(0);
+    };
+    resetForecast();
+  }, [city]);
 
   const loadMore = () => {
     setPage((prevPage) => prevPage + 1);
