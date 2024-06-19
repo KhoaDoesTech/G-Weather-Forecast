@@ -43,7 +43,8 @@ export class EmailService {
       from: process.env.EMAIL_USER,
       to: email,
       subject: 'Subscription Success',
-      text: `You have successfully subscribed to ${city} weather.`,
+      text: `You have successfully subscribed to ${city} weather.
+      To unsubscribe, click here: https://g-weather-forecast-backend.vercel.app/user/unsubscribe?email=${email}`,
     };
 
     await this.transporter.sendMail(mailOptions);
