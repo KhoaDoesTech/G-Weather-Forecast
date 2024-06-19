@@ -9,13 +9,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserModule = void 0;
 const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
-const user_service_1 = require("./user.service");
-const user_controller_1 = require("./user.controller");
+const user_service_1 = require("../user/user.service");
+const user_controller_1 = require("../user/user.controller");
 const user_schema_1 = require("./user.schema");
-const user_repository_1 = require("./user.repository");
 const email_service_1 = require("../email/email.service");
 const weather_service_1 = require("../weather/weather.service");
 const axios_1 = require("@nestjs/axios");
+const user_repository_1 = require("../user/user.repository");
 let UserModule = class UserModule {
 };
 exports.UserModule = UserModule;

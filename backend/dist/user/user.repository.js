@@ -16,7 +16,7 @@ exports.UserRepository = void 0;
 const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
-const user_schema_1 = require("./user.schema");
+const user_schema_1 = require("../user/user.schema");
 let UserRepository = class UserRepository {
     constructor(userModel) {
         this.userModel = userModel;

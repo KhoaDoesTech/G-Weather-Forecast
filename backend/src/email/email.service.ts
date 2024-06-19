@@ -3,7 +3,7 @@ import { createEmailTransport } from './email.config';
 import axios from 'axios';
 import { WeatherService } from '../weather/weather.service';
 import * as cron from 'node-cron';
-import { UserRepository } from 'src/user/user.repository';
+import { UserRepository } from '../user/user.repository';
 
 interface Weather {
   city: string;

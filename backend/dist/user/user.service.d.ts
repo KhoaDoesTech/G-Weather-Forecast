@@ -1,6 +1,6 @@
-import { UserRepository } from './user.repository';
 import { User } from './user.schema';
 import { EmailService } from '../email/email.service';
+import { UserRepository } from '../user/user.repository';
 export declare class UserService {
     private readonly userRepository;
     private readonly emailService;

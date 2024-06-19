@@ -24,7 +24,7 @@
 /// <reference types="mongoose/types/inferschematype" />
 /// <reference types="mongoose/types/inferrawdoctype" />
 import { Model } from 'mongoose';
-import { User } from './user.schema';
+import { User } from '../user/user.schema';
 export declare class UserRepository {
     private userModel;
     constructor(userModel: Model<User>);

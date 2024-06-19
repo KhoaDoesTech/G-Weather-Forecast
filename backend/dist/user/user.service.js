@@ -11,8 +11,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserService = void 0;
 const common_1 = require("@nestjs/common");
-const user_repository_1 = require("./user.repository");
 const email_service_1 = require("../email/email.service");
+const user_repository_1 = require("../user/user.repository");
 let UserService = class UserService {
     constructor(userRepository, emailService) {
         this.userRepository = userRepository;

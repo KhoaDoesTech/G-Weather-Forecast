@@ -1,5 +1,5 @@
 import { WeatherService } from '../weather/weather.service';
-import { UserRepository } from 'src/user/user.repository';
+import { UserRepository } from '../user/user.repository';
 interface Weather {
     city: string;
     time: string;
