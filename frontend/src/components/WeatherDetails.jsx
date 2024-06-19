@@ -33,7 +33,6 @@ const WeatherDetails = ({ city }) => {
       <div className="details">
         <h2>
           {weather.city} ({weather.time}){' '}
-          <button onClick={openModal}>Subscribe</button>
         </h2>
         <h6>Temperature: {weather.temperature}°C</h6>
         <h6>Wind: {weather.windSpeed} KPH</h6>
@@ -45,6 +44,7 @@ const WeatherDetails = ({ city }) => {
           alt={weather.condition.text}
         />
         <h6>{weather.condition.text}</h6>
+        <button onClick={openModal}>Subscribe</button>
       </div>
       <SubcribeModal
         OpenModal={modalOpen}

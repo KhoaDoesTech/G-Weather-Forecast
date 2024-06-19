@@ -32,7 +32,13 @@ export class EmailService {
       from: process.env.EMAIL_USER,
       to: email,
       subject: 'Confirm your email',
-      html: `<p>Please confirm your email by clicking the following link: <a href="${confirmationLink}">Confirm</a></p>`,
+      html: `
+        <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+          <h2>Please Confirm Your Email</h2>
+          <p>Click the link below to confirm your email address:</p>
+          <p><a href="${confirmationLink}" style="color: #1a73e8;">Confirm Email</a></p>
+        </div>
+      `,
     };
 
     await this.transporter.sendMail(mailOptions);
@@ -43,11 +49,20 @@ export class EmailService {
       from: process.env.EMAIL_USER,
       to: email,
       subject: 'Subscription Success',
-      text: `You have successfully subscribed to ${city} weather.
-      To unsubscribe, click here: https://g-weather-forecast-backend.vercel.app/user/unsubscribe?email=${email}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+          <h2>Subscription Success</h2>
+          <p>You have successfully subscribed to the weather updates for ${city}.</p>
+          <p>To unsubscribe, click <a href="https://g-weather-forecast-backend.vercel.app/user/unsubscribe?email=${email}" style="color: #1a73e8;">here</a>.</p>
+        </div>
+      `,
     };
 
     await this.transporter.sendMail(mailOptions);
+    await this.sendWeatherEmail(
+      email,
+      await this.weatherService.getCurrentWeather(city),
+    );
   }
 
   async sendWeatherEmail(
@@ -58,13 +73,17 @@ export class EmailService {
       from: process.env.EMAIL_USER,
       to: email,
       subject: `Weather Forecast for ${currentWeather.city}`,
-      text: `Good morning! Here is the weather forecast for ${currentWeather.city}:\n\n
-      Time: ${currentWeather.time}
-      Temperature: ${currentWeather.temperature}°F
-      Wind Speed: ${currentWeather.windSpeed} mph
-      Humidity: ${currentWeather.humidity}%
-      Condition: ${currentWeather.condition.text}
-      To unsubscribe, click here: https://g-weather-forecast-backend.vercel.app/user/unsubscribe?email=${email}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+          <h2>Weather Forecast for ${currentWeather.city}</h2>
+          <p><strong>Time:</strong> ${currentWeather.time}</p>
+          <p><strong>Temperature:</strong> ${currentWeather.temperature}°F</p>
+          <p><strong>Wind Speed:</strong> ${currentWeather.windSpeed} mph</p>
+          <p><strong>Humidity:</strong> ${currentWeather.humidity}%</p>
+          <p><strong>Condition:</strong> ${currentWeather.condition.text}</p>
+          <p>To unsubscribe, click <a href="https://g-weather-forecast-backend.vercel.app/user/unsubscribe?email=${email}" style="color: #1a73e8;">here</a>.</p>
+        </div>
+      `,
     };
 
     await this.transporter.sendMail(mailOptions);
@@ -79,9 +98,13 @@ export class EmailService {
     cron.schedule(
       cronTime,
       async () => {
-        const currentWeather =
-          await this.weatherService.getCurrentWeather(city);
-        await this.sendWeatherEmail(email, currentWeather);
+        try {
+          const currentWeather =
+            await this.weatherService.getCurrentWeather(city);
+          await this.sendWeatherEmail(email, currentWeather);
+        } catch (error) {
+          console.error(`Failed to schedule email for ${city}:`, error);
+        }
       },
       {
         scheduled: true,
@@ -91,21 +114,37 @@ export class EmailService {
   }
 
   async scheduleDailyWeatherEmails(): Promise<void> {
-    const users = await this.userRepository.findAllSubscribedUsers();
-    for (const user of users) {
-      for (const city of user.city) {
-        // Assuming we can determine the city's timezone
-        const timeZone = await this.getCityTimeZone(city);
-        await this.scheduleEmailForCity(user.email, city, timeZone);
+    try {
+      const users = await this.userRepository.findAllSubscribedUsers();
+      for (const user of users) {
+        for (const city of user.city) {
+          try {
+            const timeZone = await this.getCityTimeZone(city);
+            await this.scheduleEmailForCity(user.email, city, timeZone);
+          } catch (error) {
+            console.error(`Failed to get timezone for city ${city}:`, error);
+          }
+        }
       }
+    } catch (error) {
+      console.error('Failed to schedule daily weather emails:', error);
     }
   }
 
   private async getCityTimeZone(city: string): Promise<string> {
     const apiKey = process.env.TIMEZONE_API_KEY;
-    const apiUrl = `http://api.timezonedb.com/v2.1/get-time-zone?key=${apiKey}&format=json&by=zone&zone=${city}`;
+    const apiUrl = `http://api.timezonedb.com/v2.1/get-time-zone?key=${apiKey}&format=json&by=city&city=${city}`;
 
-    const response = await axios.get(apiUrl);
-    return response.data.zoneName;
+    try {
+      const response = await axios.get(apiUrl);
+      if (response.data.status === 'OK') {
+        return response.data.zoneName;
+      } else {
+        throw new Error(`Timezone API error: ${response.data.message}`);
+      }
+    } catch (error) {
+      console.error(`Failed to fetch timezone for city ${city}:`, error);
+      throw error;
+    }
   }
 }
