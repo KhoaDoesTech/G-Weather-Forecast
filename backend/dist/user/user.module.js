@@ -13,15 +13,19 @@ const user_service_1 = require("./user.service");
 const user_controller_1 = require("./user.controller");
 const user_schema_1 = require("./user.schema");
 const user_repository_1 = require("./user.repository");
+const email_service_1 = require("../email/email.service");
+const weather_service_1 = require("../weather/weather.service");
+const axios_1 = require("@nestjs/axios");
 let UserModule = class UserModule {
 };
 exports.UserModule = UserModule;
 exports.UserModule = UserModule = __decorate([
     (0, common_1.Module)({
         imports: [
+            axios_1.HttpModule,
             mongoose_1.MongooseModule.forFeature([{ name: user_schema_1.User.name, schema: user_schema_1.UserSchema }]),
         ],
-        providers: [user_service_1.UserService, user_repository_1.UserRepository],
+        providers: [user_service_1.UserService, user_repository_1.UserRepository, email_service_1.EmailService, weather_service_1.WeatherService],
         controllers: [user_controller_1.UserController],
     })
 ], UserModule);

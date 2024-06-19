@@ -31,6 +31,7 @@ export declare class UserRepository {
     createUser(email: string, city: string): Promise<User>;
     findByEmail(email: string): Promise<User | null>;
     addCityToUser(email: string, city: string): Promise<User>;
+    findAllSubscribedUsers(): Promise<User[]>;
     updateUser(email: string, update: Partial<User>): Promise<User>;
     deleteUser(email: string): Promise<User | null>;
 }

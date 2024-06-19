@@ -33,6 +33,9 @@ let UserRepository = class UserRepository {
             .findOneAndUpdate({ email }, { $addToSet: { city } }, { new: true })
             .exec();
     }
+    async findAllSubscribedUsers() {
+        return await this.userModel.find({ subscribed: true }).exec();
+    }
     async updateUser(email, update) {
         return await this.userModel
             .findOneAndUpdate({ email }, update, { new: true })

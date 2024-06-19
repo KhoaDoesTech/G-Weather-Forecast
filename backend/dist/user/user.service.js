@@ -12,46 +12,40 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserService = void 0;
 const common_1 = require("@nestjs/common");
 const user_repository_1 = require("./user.repository");
-const nodemailer = require("nodemailer");
+const email_service_1 = require("../email/email.service");
 let UserService = class UserService {
-    constructor(userRepository) {
+    constructor(userRepository, emailService) {
         this.userRepository = userRepository;
-    }
-    async sendConfirmationEmail(email) {
-        const transporter = nodemailer.createTransport({
-            host: 'smtp-mail.outlook.com',
-            secureConnection: false,
-            port: 587,
-            auth: {
-                user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASS,
-            },
-            tls: {
-                ciphers: 'SSLv3',
-                rejectUnauthorized: false,
-            },
-        });
-        const mailOptions = {
-            from: process.env.EMAIL_USER,
-            to: email,
-            subject: 'Confirm your email',
-            text: `Please confirm your email by clicking the following link: http://localhost:3000/user/confirm?email=${email}`,
-        };
-        await transporter.sendMail(mailOptions);
+        this.emailService = emailService;
     }
     async register(email, city) {
-        let user = await this.userRepository.findByEmail(email);
-        if (user) {
-            user = await this.userRepository.addCityToUser(email, city);
+        let foundUser = await this.userRepository.findByEmail(email);
+        if (foundUser) {
+            if (foundUser.isConfirmed) {
+                foundUser = await this.userRepository.addCityToUser(email, city);
+                foundUser = await this.userRepository.updateUser(email, {
+                    subscribed: true,
+                });
+                await this.emailService.sendSuccessEmail(email, city);
+            }
+            else {
+                await this.emailService.sendConfirmationEmail(email);
+            }
         }
         else {
-            user = await this.userRepository.createUser(email, city);
-            await this.sendConfirmationEmail(email);
+            foundUser = await this.userRepository.createUser(email, city);
+            await this.emailService.sendConfirmationEmail(email);
         }
-        return user;
+        return foundUser;
     }
     async confirmEmail(email) {
-        return await this.userRepository.updateUser(email, { isConfirmed: true });
+        const user = await this.userRepository.updateUser(email, {
+            isConfirmed: true,
+            subscribed: true,
+        });
+        await this.emailService.sendSuccessEmail(email, user.city[0]);
+        await this.emailService.scheduleDailyWeatherEmails();
+        return user;
     }
     async unsubscribe(email) {
         return await this.userRepository.updateUser(email, { subscribed: false });
@@ -60,6 +54,7 @@ let UserService = class UserService {
 exports.UserService = UserService;
 exports.UserService = UserService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [user_repository_1.UserRepository])
+    __metadata("design:paramtypes", [user_repository_1.UserRepository,
+        email_service_1.EmailService])
 ], UserService);
 //# sourceMappingURL=user.service.js.map

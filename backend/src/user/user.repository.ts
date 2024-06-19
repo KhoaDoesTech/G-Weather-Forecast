@@ -18,12 +18,12 @@ export class UserRepository {
 
   async addCityToUser(email: string, city: string): Promise<User> {
     return await this.userModel
-      .findOneAndUpdate(
-        { email },
-        { $addToSet: { city } }, // $addToSet ensures no duplicates
-        { new: true },
-      )
+      .findOneAndUpdate({ email }, { $addToSet: { city } }, { new: true })
       .exec();
+  }
+
+  async findAllSubscribedUsers(): Promise<User[]> {
+    return await this.userModel.find({ subscribed: true }).exec();
   }
 
   async updateUser(email: string, update: Partial<User>): Promise<User> {

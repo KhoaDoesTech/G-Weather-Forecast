@@ -47,8 +47,8 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "confirmEmail", null);
 __decorate([
-    (0, common_1.Post)('unsubscribe'),
-    __param(0, (0, common_1.Body)('email')),
+    (0, common_1.Get)('unsubscribe'),
+    __param(0, (0, common_1.Query)('email')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)

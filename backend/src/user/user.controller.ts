@@ -16,8 +16,8 @@ export class UserController {
     return await this.userService.confirmEmail(email);
   }
 
-  @Post('unsubscribe')
-  async unsubscribe(@Body('email') email: string) {
+  @Get('unsubscribe')
+  async unsubscribe(@Query('email') email: string) {
     return await this.userService.unsubscribe(email);
   }
 }
