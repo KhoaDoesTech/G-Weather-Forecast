@@ -1,19 +1,27 @@
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import HistorySearch from './HistorySearch';
 
-const WeatherInput = ({ searchCityData }) => {
+function WeatherInput({ searchCityData }) {
   const [city, setCity] = useState('');
+  const now = new Date();
+  const ONE_DAY = 86400000; // 86400000 milliseconds = 1 day
   const [cityHistory, setCityHistory] = useState(() => {
-    const savedHistory = localStorage.getItem('cityHistory');
-    return savedHistory ? JSON.parse(savedHistory) : [];
+    const savedHistory = getItemWithExpiry('cityHistory');
+    return savedHistory;
   });
 
   const handleSearch = async () => {
     const foundCity = await searchCityData(city);
     if (foundCity) {
       setCityHistory((prevHistory) => {
-        if (!prevHistory.includes(foundCity)) {
-          return [...prevHistory, foundCity];
+        if (!prevHistory.some((city) => city.value === foundCity)) {
+          const newHistory = [
+            ...prevHistory,
+            { value: foundCity, expiry: now.getTime() + ONE_DAY },
+          ];
+          localStorage.setItem('cityHistory', JSON.stringify(newHistory));
+          return newHistory;
         }
         return prevHistory;
       });
@@ -26,8 +34,13 @@ const WeatherInput = ({ searchCityData }) => {
       const foundCity = await searchCityData(`${latitude},${longitude}`);
       if (foundCity) {
         setCityHistory((prevHistory) => {
-          if (!prevHistory.includes(foundCity)) {
-            return [...prevHistory, foundCity];
+          if (!prevHistory.some((city) => city.value === foundCity)) {
+            const newHistory = [
+              ...prevHistory,
+              { value: foundCity, expiry: now.getTime() + ONE_DAY },
+            ];
+            localStorage.setItem('cityHistory', JSON.stringify(newHistory));
+            return newHistory;
           }
           return prevHistory;
         });
@@ -42,14 +55,26 @@ const WeatherInput = ({ searchCityData }) => {
 
   useEffect(() => {
     localStorage.setItem('cityHistory', JSON.stringify(cityHistory));
-
-    const timer = setTimeout(() => {
-      setCityHistory([]);
-      localStorage.removeItem('cityHistory');
-    }, 86400000); // 86400000 milliseconds = 1 day
-
-    return () => clearTimeout(timer);
   }, [cityHistory]);
+
+  function getItemWithExpiry(key) {
+    const itemStr = localStorage.getItem(key);
+    if (!itemStr) {
+      return [];
+    }
+    let items = JSON.parse(itemStr);
+
+    items = items.filter((item) => {
+      if (now.getTime() > item.expiry) {
+        return false;
+      }
+      return true;
+    });
+
+    localStorage.setItem(key, JSON.stringify(items)); // Update the array in local storage
+
+    return items;
+  }
 
   return (
     <div className="weather-input">
@@ -69,25 +94,13 @@ const WeatherInput = ({ searchCityData }) => {
         Use Current Location
       </button>
 
-      {cityHistory.length > 0 && (
-        <div className="history-search">
-          <h3>Search History</h3>
-          <ul className="history-card">
-            {cityHistory.map((city, index) => (
-              <li
-                className="history-list"
-                key={index}
-                onClick={() => handleCityHistoryClick(city)}
-              >
-                {city}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+      <HistorySearch
+        onCitySelect={handleCityHistoryClick}
+        cityHistory={cityHistory}
+      />
     </div>
   );
-};
+}
 
 WeatherInput.propTypes = {
   searchCityData: PropTypes.func.isRequired,
