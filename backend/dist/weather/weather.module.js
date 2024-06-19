@@ -10,11 +10,13 @@ exports.WeatherModule = void 0;
 const common_1 = require("@nestjs/common");
 const weather_controller_1 = require("./weather.controller");
 const weather_service_1 = require("./weather.service");
+const axios_1 = require("@nestjs/axios");
 let WeatherModule = class WeatherModule {
 };
 exports.WeatherModule = WeatherModule;
 exports.WeatherModule = WeatherModule = __decorate([
     (0, common_1.Module)({
+        imports: [axios_1.HttpModule],
         controllers: [weather_controller_1.WeatherController],
         providers: [weather_service_1.WeatherService],
     })
