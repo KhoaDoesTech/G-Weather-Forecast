@@ -7,8 +7,10 @@ dotenv.config();
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     app.enableCors({
-        origin: ['https://g-weather-forecast-front-end.vercel.app'],
+        origin: 'https://g-weather-forecast-front-end.vercel.app',
+        allowedHeaders: 'Content-Type, Authorization',
         credentials: true,
+        optionsSuccessStatus: 200,
     });
     await app.listen(3000);
 }

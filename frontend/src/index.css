@@ -343,3 +343,20 @@ h1 {
 .icon button:hover {
   background-color: goldenrod;
 }
+
+/* Add this for your button */
+.load-more-button {
+  display: block;
+  margin: 0 auto;
+  padding: 10px 20px;
+  background-color: #5372F0;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.load-more-button:hover {
+  background-color: #2c52ed;
+}

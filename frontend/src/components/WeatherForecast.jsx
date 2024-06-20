@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import ForecastCard from './ForecastCard';
 import { getWeatherForecast } from '../apis/Weather';
@@ -9,7 +9,6 @@ const WeatherForecast = ({ city }) => {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [total, setTotal] = useState(0);
-  const observer = useRef();
 
   useEffect(() => {
     const resetForecast = () => {
@@ -59,22 +58,6 @@ const WeatherForecast = ({ city }) => {
     };
   }, [page, city, isFirstRender]);
 
-  const lastForecastElementRef = useCallback(
-    (node) => {
-      if (loading) return;
-      if (observer.current) observer.current.disconnect();
-      if (node && forecast.length < total) {
-        observer.current = new IntersectionObserver((entries) => {
-          if (entries[0].isIntersecting && forecast.length < total) {
-            loadMore();
-          }
-        });
-        observer.current.observe(node);
-      }
-    },
-    [loading, forecast.length, total]
-  );
-
   const groupedForecasts = [];
   for (let i = 0; i < forecast.length; i += 4) {
     groupedForecasts.push(forecast.slice(i, i + 4));
@@ -85,23 +68,19 @@ const WeatherForecast = ({ city }) => {
       <h2>{forecast.length}-Day Forecast</h2>
       {groupedForecasts.map((group, groupIndex) => (
         <ul key={groupIndex} className="weather-cards">
-          {group.map((day, index) => (
-            <ForecastCard
-              key={day.date}
-              day={day}
-              ref={
-                index === group.length - 1 &&
-                groupIndex === groupedForecasts.length - 1
-                  ? lastForecastElementRef
-                  : null
-              }
-            />
+          {group.map((day) => (
+            <ForecastCard key={day.date} day={day} />
           ))}
         </ul>
       ))}
       {loading && <p>Loading...</p>}
-      {forecast.length == 0 ||
-        (forecast.length >= total && <p>No more data to load.</p>)}
+      {!loading && forecast.length === 0 && <p>No data to display.</p>}
+      {!loading && forecast.length < total && (
+        <button className="load-more-button" onClick={loadMore}>
+          Load more
+        </button>
+      )}
+      {!loading && forecast.length >= total && <p>No more data to load.</p>}
     </div>
   );
 };

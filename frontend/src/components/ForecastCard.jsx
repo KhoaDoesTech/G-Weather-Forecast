@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
-import { forwardRef } from 'react';
 
-const ForecastCard = forwardRef(({ day }, ref) => {
+const ForecastCard = ({ day }) => {
   return (
     <li className="card">
       <h3>({day.date})</h3>
@@ -10,10 +9,10 @@ const ForecastCard = forwardRef(({ day }, ref) => {
       </div>
       <h6>Temp: {day.temperature}°C</h6>
       <h6>Wind: {day.windSpeed} KPH</h6>
-      <h6 ref={ref}>Humidity: {day.humidity}%</h6>
+      <h6>Humidity: {day.humidity}%</h6>
     </li>
   );
-});
+};
 
 ForecastCard.displayName = 'ForecastCard';
 
