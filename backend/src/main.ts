@@ -10,6 +10,7 @@ async function bootstrap() {
     origin: 'https://g-weather-forecast-front-end.vercel.app',
     allowedHeaders: 'Content-Type, Authorization',
     credentials: true,
+    optionsSuccessStatus: 200,
   });
 
   await app.listen(3000);
